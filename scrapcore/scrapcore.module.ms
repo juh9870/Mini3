@@ -1,6 +1,6 @@
 import "qa"
 
-if globals.hasIndex("ScrapCore.Module") then
+if globals.hasIndex("scrapcore.module") then
     qa.abort "Module module got imported directly, which should never happen after startup"
 end if
 
@@ -9,7 +9,7 @@ nativeImport = @import
 // @namespace ScrapCore.Module
 // Module for manipulating modules
 Module = {}
-Module.moduleName = "_ScrapCore.Module.module_name"
+Module.moduleName = "_scrapcore.module.module_name"
 
 Module.importStack = []
 importStack = Module.importStack
