@@ -136,35 +136,6 @@ for lib in sysLibFiles
     builtInLibraries[lib[:-3]] = true
 end for
 
-// // Syslib resolver
-// sysLibResolver = function(moduleName)
-//     if not outer.builtInLibraries.hasIndex(moduleName) then return null
-//     nativeImport moduleName
-//     return locals[moduleName]
-// end function
-// Module.resolvers.push @sysLibResolver
-
-// // @public
-// // Creates a default resolver for a given base module name
-// // @param {string} baseName - The base namespace of the module
-// // @returns {(string)=>unknown|null} - A resolver function that resolves modules based on the base name
-// Module.createDefaultResolver = function(baseName)
-//     nativeImport = @nativeImport
-//     resolver = function(moduleName)
-//         if moduleName == @baseName then
-//             nativeImport @baseName
-//         end if
-//         if moduleName[:baseName.len + 1] != baseName + "." then return null
-
-//         nativeImport baseName
-//         return baseName
-//     end function
-//     return @resolver
-// end function
-
-// // ScrapCore resolver
-// Module.resolvers.push Module.createDefaultResolver("scrapcore")
-
 // @global
 globals.module = function(moduleName = null)
     if moduleName == null then return Module

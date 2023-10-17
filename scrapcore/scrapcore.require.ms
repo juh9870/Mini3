@@ -236,16 +236,6 @@ installHooks = function(scope)
         return req.exports.From.make(source)
     end function
 
-    // // @global locals.declare
-    // // Converts module exports into a module
-    // scope.declare = function(moduleName)
-    //     return req.exports.declare(scope, moduleName)
-    // end function
-
-    // scope.declareEnd = function
-    //     module.finish scope.exports
-    // end function
-
     // @global locals.declare
     // Exports
     scope.export = function(nameOrMap)

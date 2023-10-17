@@ -9,20 +9,6 @@ hook locals
 module("scrapcore.system").into globals
 module "stringUtil" // side-effects
 
-// systemsResolver = function(moduleName)
-//     moduleName = moduleName.lower
-//     if moduleName[-4:] != ".sys" then return null
-
-//     Module = globals.module
-//     Module.nativeImport moduleName
-//     module = @locals[moduleName]
-//     module[Module.moduleName] = moduleName
-//     return module
-// end function
-
-// module.resolvers.push @systemsResolver
-// module.resolvers.push module.createDefaultResolver("mini3")
-
 globals.prelude = function(scope)
     prelude = module("mini3.prelude")
     prelude.into scope
