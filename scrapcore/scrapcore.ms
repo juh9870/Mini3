@@ -118,6 +118,8 @@ requireLazy "problem", "scrapcore.problem"
 requireLazy "system", "scrapcore.system"
 requireLazy "require", "scrapcore.require"
 
+globals.scrapcore = Core;
+
 // Require needs to be imported to get properly hooked
 module.import "scrapcore.require"
 
