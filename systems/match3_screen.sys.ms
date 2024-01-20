@@ -18,9 +18,9 @@ worldInit = function(world)
 end function
 
 stateEnter = function(world)
-    screen = cut.make(0, 0, W, H)
-    leftPanel = cut.left(screen, EDGE)
-    rightPanel = cut.right(screen, EDGE)
+    screen = Rect.make(0, 0, W, H)
+    leftPanel = screen.cutLeft(EDGE)
+    rightPanel = screen.cutRight(EDGE)
 
     board = Board.make(screen, 10, 10)
     world.boards.push board

@@ -1,20 +1,31 @@
 hook locals
 require "extends", "ClassHolder", from("scrapcore.oop")
 require "Pool", from("mini3.caching")
+Serde = module("scrapcore.serde")
 
 // Y
 // ^
 // |
 // o - > X
 // RectCut for UI needs
-//
-// Must NOT be stored in a world
+Rect = extends(ClassHolder, "Mini3.Rect")
+Rect._ctor = function
+    self.left = null
+    self.top = null
+    self.right = null
+    self.bottom = null
+end function
 
-rectCache = Pool.make
+Serde.register Rect, "Mini3.Rect", {
+  "left": Serde.Number,
+  "bottom": Serde.Number,
+  "right": Serde.Number,
+  "top": Serde.Number,
+}
 
 // Order is X,Y,X,Y
-makeRect = function(left, bottom, right, top)
-    rect = rectCache.get
+Rect.make = function(left, bottom, right, top)
+    rect = super.make
     rect.left = left
     rect.top = top
     rect.right = right
@@ -22,47 +33,36 @@ makeRect = function(left, bottom, right, top)
     return rect
 end function
 
-dropRect = function(rect)
-    rectCache.release rect
+Rect.class.cutTop = function(self, amount)
+    top = @self.top
+    self.top -= @amount
+    return Rect.make(@self.left, @self.top, @self.right, @top)
 end function
 
-cutTop = function(rect, amount)
-    top = rect.top
-    rect.top -= amount
-    return makeRect(rect.left, rect.top, rect.right, top)
+Rect.class.cutRight = function(self, amount)
+    right = @self.right
+    @self.right -= amount
+    return Rect.make(@self.right, @self.bottom, right, @self.top)
 end function
 
-cutRight = function(rect, amount)
-    right = rect.right
-    rect.right -= amount
-    return makeRect(rect.right, rect.bottom, right, rect.top)
+Rect.class.cutBottom = function(self, amount)
+    bottom = @self.bottom
+    @self.bottom += amount
+    return Rect.make(@self.left, bottom, @self.right, @self.bottom)
 end function
 
-cutBottom = function(rect, amount)
-    bottom = rect.bottom
-    rect.bottom += amount
-    return makeRect(rect.left, bottom, rect.right, rect.bottom)
+Rect.class.cutLeft = function(self, amount)
+    left = @self.left
+    @self.left += amount
+    return Rect.make(left, @self.bottom, @self.left, @self.top)
 end function
 
-cutLeft = function(rect, amount)
-    left = rect.left
-    rect.left += amount
-    return makeRect(left, rect.bottom, rect.left, rect.top)
+Rect.class.width = function(self)
+    return @self.right - @self.left
 end function
 
-width = function(rect)
-    return rect.right - rect.left
+Rect.class.height = function(self)
+    return @self.top - @self.bottom
 end function
 
-height = function(rect)
-    return rect.top - rect.bottom
-end function
-
-export (@makeRect).as("make")
-export (@dropRect).as("drop")
-export (@cutTop).as("top")
-export (@cutRight).as("right")
-export (@cutBottom).as("bottom")
-export (@cutLeft).as("left")
-export "width"
-export "height"
+export "Rect"

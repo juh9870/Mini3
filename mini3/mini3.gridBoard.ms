@@ -7,6 +7,7 @@ ease = module("mini3.easing")
 module("scrapcore.oop").into locals
 Serde = module("scrapcore.serde")
 require "min", from("mathUtil")
+require "Rect", from("mini3.rectcut")
 
 GridBoard = extends(ClassHolder, "Mini3.GridBoard")
 GridBoard.class._ctor = function(self)
@@ -21,7 +22,7 @@ Serde.register GridBoard, "Mini3.GridBoard", {
   "w": Serde.Number,
   "h": Serde.Number,
   "gems": Serde.List.make(Serde.Plain),
-  "rect": Serde.Plain,
+  "rect": Rect,
   "tileSize": Serde.Number,
 }
 
@@ -31,8 +32,8 @@ end function
 
 GridBoard.make = function(self, rect, width, height, gemType)
     board = super.make
-    availableW = cut.width(rect)
-    availableH = cut.height(rect)
+    availableW = rect.width()
+    availableH = rect.height()
     tileW = availableW / width
     tileH = availableH / height
     tileSize = min(tileW, tileH)
@@ -50,10 +51,10 @@ GridBoard.make = function(self, rect, width, height, gemType)
     ox = (availableW - boardW) / 2
     oy = (availableH - boardH) / 2
 
-    cut.left rect, ox
-    cut.right rect, ox
-    cut.top rect, oy
-    cut.bottom rect, oy
+    rect.cutLeft ox
+    rect.cutRight ox
+    rect.cutTop oy
+    rect.cutBottom oy
 
     board.w = width
     board.h = height
