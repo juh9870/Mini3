@@ -72,7 +72,7 @@ Serde.membersSerialize = function(ty, typeName)
         ser = {
           "_serdeTypeName": outer.typeName,
         }
-        pprint {"@self._serdeMembers": @self._serdeMembers}
+        // pprint {"@self._serdeMembers": @self._serdeMembers}
         for idx in self._serdeMembers.indexes
             serTy = (@self._serdeMembers)[@idx]
             ser[@idx] = serTy.serialize(instance[@idx])
