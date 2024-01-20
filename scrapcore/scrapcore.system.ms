@@ -9,7 +9,7 @@ System = {}
 // Shortcut for qa.abort
 // @param {string} message - error message
 System.throw = function(message)
-    pprint "An error was thrown! use `pprint stackTrace` to see a stacktrace" + char(10) + message
+    print "An error was thrown! use `pprint stackTrace` to see a stacktrace" + char(10) + message
     exit
 end function
 
