@@ -16,7 +16,7 @@ As.make = function(self, original, alias)
     return @as
 end function
 
-As._ctor = function
+As.class._ctor = function
     super._ctor
     self.original = null
     self.alias = null
@@ -58,7 +58,7 @@ From.make = function(self, source)
     return from
 end function
 
-From._ctor = function(self)
+From.class._ctor = function(self)
     super._ctor
     self.source = null
     self.target = null
