@@ -48,7 +48,7 @@ run = function
         print "world initialized!"
         loop.stateEnter globals._world
     else
-        globals._world = World.deserialzie(globals._world)
+        globals._world = World.deserialize(globals._world)
         print "Hot reload detected, running after-reload hooks!"
         loop.afterReload globals._world
         print "Hot reload complete!"
