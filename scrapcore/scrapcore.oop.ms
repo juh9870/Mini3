@@ -2,17 +2,33 @@
 OOP = {}
 
 implementationToken = function(type)
-    return "_implements@" + type.class.name + ";" + type._classId
+    return "_implements@" + type.class._name + ";" + type._classId
 end function
 
 implements = function(class, type)
-    typeClass = type.class
-    token = implementationToken(type)
+    return typeImplements(class.getType, @type)
+end function
+
+typeImplements = function(ty, implType)
+    token = implementationToken(implType)
+
     while true
-        if (@class).hasIndex(@token) or refEquals(@class, @typeClass) then return true
-        if not (@class).hasIndex("__isa") then return false
-        class = @(@class).__isa
+        if (@ty).hasIndex(@token) or refEquals(@ty, @implType) then return true
+        if not (@ty).hasIndex("__isa") then return false
+        ty = @(@ty).__isa
     end while
+end function
+
+assertImplements = function(class, type)
+    if not implements(class, type) then
+        system.throw "Assertion failed: class " + class._name + " does not implement " + type.class._name
+    end if
+end function
+
+assertTypeImplements = function(ty, implType)
+    if not typeImplements(ty, implType) then
+        system.throw "Assertion failed: class " + ty.class._name + " does not implement " + implType.class._name
+    end if
 end function
 
 // @class
@@ -22,6 +38,8 @@ ClassHolder.class = {"_classId": 0}
 ClassHolder.nextId = 1
 
 // @constructor
+// This should populate class instance with all required fields, but not
+// neccesarily with valid values, those should be populated in `make`
 ClassHolder.class._ctor = function(self)
 end function
 
@@ -123,11 +141,12 @@ AutoMixin.generateKeys = function(self)
     end for
 end function
 
-AutoMixin.apply = function(self, class)
-    if implements(class, self) then
-        system.reportError "Class " + class.class._name + " or one of its parents already implements AutoMixin " + self.class.name
+AutoMixin.apply = function(self, ty)
+    if implements(ty, self) then
+        system.throw "Class " + ty.class._name + " or one of its parents already implements AutoMixin " + self.class._name
     end if
-    self.applyOverrides target.class
+    self.applyOverrides ty.class
+    ty[implementationToken(self)] = true
 end function
 
 // @internal
@@ -143,20 +162,141 @@ AutoMixin.applyOverrides = function(self, target)
     end for
 end function
 
+// @class
+// Basis of the Trait system
+Trait = extends(ClassHolder, "Trait", true)
+
+Trait.badImpl = function(self, ty, msg)
+    system.throw "Incorrect implementation of trait " + self.class._name + " for type " + ty._name + " - " + msg
+end function
+
+// @public
+// Copies over all methods from the provided map into the provided class
+// @param {ClassHolder.class} class - class to insert methods into
+// @param {Map<string, funcRef>} - methods to insert into class
+Trait.applyDefaultMethods = function(class, methods)
+    for k in methods.indexes
+        if class.hasIndex(@k) then
+            continue
+        end if
+        class[@k] = methods[@k]
+    end for
+end function
+
+// @protected
+// Applies default methods to the target type and its class
+// @type {(ClassHolder) => void}
+Trait.applyDefaults = null
+
+// @protected
+// Methods that are required to be implemented by the class instances
+// @type {Map<string, funcRef> | null}
+Trait.members = null
+
+// @protected
+// Static methods that are required to be implemented by the class type
+// @type {Map<string, funcRef> | null}
+Trait.statics = null
+
+// @public
+// Marks target type as implementing this trait
+//
+// Target type must already implement all trait methods with the EXACT
+// signature, including parameter names and default values
+//
+// @param {ClassHolder} ty - type to implement trait for
+Trait.impl = function(self, ty)
+    typeClass = ty.class
+
+    if implements(ty.class, self) then
+        system.throw "Class " + ty.class._name + " or one of its parents already implements Trait " + self.class._name
+    end if
+
+    if @self.applyDefaults != null then
+        self.applyDefaults @ty
+    end if
+
+    members = self.members
+    if @members != null then
+        for idx in members.indexes
+            traitFunc = members[@idx]
+
+            if not @traitFunc isa funcRef then
+                system.throw "Trait " + self.class._name + " contains non-function member at index `" + @idx + "`"
+            end if
+
+            if not typeClass.hasIndex(@ids) then
+                self.badImpl typeClass, "member `" + @idx + "` is missing"
+            end if
+
+            classFunc = typeClass[@idx]
+
+            if not @classFunc isa funcRef then
+                self.badImpl typeClass, "member `" + @idx + "` is not a function"
+            end if
+
+            traitFuncSignature = str(@traitFunc)
+            classFuncSignature = str(@classFunc)
+
+            if @traitFuncSignature != @classFuncSignature then
+                self.badImpl typeClass, "incompatible method signatures for `" + @idx + "`, required " + @traitFuncSignature + " but found " + classFuncSignature
+            end if
+        end for
+    end if
+
+    statics = self.statics
+    if @statics != null then
+        for idx in statics.indexes
+            traitFunc = statics[@idx]
+
+            if not @traitFunc isa funcRef then
+                system.throw "Trait " + self._name + " contains non-function member at index `" + @idx + "`"
+            end if
+
+            if not ty.hasIndex(@idx) then
+                self.badImpl ty, "member `" + @idx + "` is missing"
+            end if
+
+            staticFunc = ty[@idx]
+
+            if not @staticFunc isa funcRef then
+                self.badImpl ty, "member `" + @idx + "` is not a function"
+            end if
+
+            traitFuncSignature = str(@traitFunc)
+            staticFuncSignature = str(@staticFunc)
+
+            if @traitFuncSignature != @staticFuncSignature then
+                self.badImpl ty, "incompatible method signatures for `" + @idx + "`, required " + @traitFuncSignature + " but found " + staticFuncSignature
+            end if
+        end for
+    end if
+
+    token = implementationToken(self)
+
+    ty[token] = true
+end function
+
+
 OOP.ClassHolder = @ClassHolder
+OOP.Trait = @Trait
 OOP.Mixin = @Mixin
 OOP.AutoMixin = @AutoMixin
 OOP.extends = @extends
 OOP.implementationToken = @implementationToken
 OOP.implements = @implements
+OOP.typeImplements = @typeImplements
+OOP.assertImplements = @assertImplements
+OOP.assertTypeImplements = @assertTypeImplements
 
 // @public
 OOP.into = function(scope)
     scope.ClassHolder = @OOP.ClassHolder
     scope.Mixin = @OOP.Mixin
-    scope.AutoMixin = @OOP.AutoMixin
     scope.extends = @OOP.extends
     scope.implements = @OOP.implements
+    scope.assertImplements = @OOP.assertImplements
+    scope.assertTypeImplements = @OOP.assertTypeImplements
     return OOP
 end function
 
