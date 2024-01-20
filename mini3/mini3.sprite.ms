@@ -13,6 +13,7 @@ SpriteMarker._ctor = function
     self.z = 0
     self.scale = 1
     self.rotation = 0
+    self.tint = color.white
 end function
 
 Serde.register SpriteMarker, "Mini3.SpriteMarker", {
@@ -23,6 +24,7 @@ Serde.register SpriteMarker, "Mini3.SpriteMarker", {
   "z": Serde.Number,
   "scale": Serde.Number,
   "rotation": Serde.Number,
+  "tint": Serde.String,
 }
 
 SpriteMarker.makeSerde = function
