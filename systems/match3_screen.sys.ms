@@ -29,8 +29,8 @@ stateEnter = function(world)
     duration = board.animateBoardFallIn(world)
     print "Fade in animation took " + duration + " seconds"
 
-    leftBlock = makeSprite(world, "left_block", "/sys/pics/Block.png", 64, 64, leftPanel)
-    rightBlock = makeSprite(world, "right_block", "/sys/pics/Block.png", 64, 64, rightPanel)
+    leftBlock = SpriteMarker.make(world, "left_block", "/sys/pics/Block.png", 64, 64, leftPanel)
+    rightBlock = SpriteMarker.make(world, "right_block", "/sys/pics/Block.png", 64, 64, rightPanel)
 end function
 
 step = function(world)

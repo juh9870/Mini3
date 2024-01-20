@@ -1,6 +1,6 @@
 hook locals
 
-require "makeSprite", "getSprite", "fitSprite", from("mini3.sprite")
+require "SpriteMarker", from("mini3.sprite")
 Rect = module("mini3.rectcut").Rect
 tween = module("mini3.tweener")
 ease = module("mini3.easing")
@@ -9,8 +9,7 @@ gridBoard = module("mini3.gridBoard")
 World = module("mini3.world").World
 Serde = module("scrapcore.serde")
 
-export "makeSprite"
-export "getSprite"
+export "SpriteMarker"
 export "Rect"
 export "tween"
 export "ease"
@@ -20,9 +19,7 @@ export "Serde"
 
 into = function(scope)
     scope.Rect = @Rect
-    scope.getSprite = @getSprite
-    scope.makeSprite = @makeSprite
-    scope.fitSprite = @fitSprite
+    scope.SpriteMarker = @SpriteMarker
     scope.tween = @tween
     scope.ease = @ease
     scope.Gem = @Gem

@@ -1,6 +1,6 @@
 hook locals
 
-require "makeSprite", from("mini3.sprite")
+require "SpriteMarker", from("mini3.sprite")
 module("scrapcore.oop").into locals
 Serde = module("scrapcore.serde")
 
@@ -31,7 +31,7 @@ Gem.make = function(self, board, type, pos)
 end function
 
 Gem.class.sprite = function(self, world, board)
-    sprite = makeSprite(world, self.id, "/sys/pics/Block.png")
+    sprite = SpriteMarker.make(world, self.id, "/sys/pics/Block.png")
     sprite.tint = @self.type
     sprite.scale = @board.tileSize / 64
     return sprite

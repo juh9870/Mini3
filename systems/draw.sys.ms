@@ -1,6 +1,7 @@
 hook locals
 prelude locals
 Pool = module("mini3.caching").Pool
+SpriteMarker = module("mini3.sprite").SpriteMarker
 
 cache = {}
 globals.drawSysCache = cache
@@ -16,8 +17,9 @@ worldInit = function(world)
     world.displayIndex = 4
     // @type {Map<string, SpriteMarker>} Persistant sprites, never released automagically
     world.sprites = {}
+    SpriteMarker = outer.SpriteMarker
     defaultMarker = function
-        return {} // assigned at `get` location
+        return outer.SpriteMarker.makeSerde // assigned at `get` location
     end function
     world._spritesMarkerPool = Pool.make(@defaultMarker)
 end function
