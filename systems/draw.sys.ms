@@ -6,10 +6,9 @@ SpriteMarker = module("mini3.sprite").SpriteMarker
 cache = {}
 globals.drawSysCache = cache
 
-
 setup = function(_)
     World.addSerde "displayIndex", Serde.Number
-    World.addSerde "sprites", Serde.Plain
+    World.addSerde "sprites", Serde.Map.make(SpriteMarker)
 end function
 
 worldInit = function(world)
