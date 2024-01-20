@@ -153,7 +153,7 @@ Serde.Map.make = function(itemType)
 
     serde.deserialize = function(self, data)
         deser = {}
-        for value in data.indexes
+        for k in data.indexes
             deser[@k] outer.itemType.deserialize(data[@k])
         end for
         return deser
