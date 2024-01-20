@@ -23,7 +23,7 @@ end function
 Serde.register GridBoard, "Mini3.GridBoard", {
   "w": Serde.Number,
   "h": Serde.Number,
-  "gems": Serde.List.make(Gem),
+  "gems": Serde.List.of(Gem),
   "rect": Rect,
   "tileSize": Serde.Number,
   "id": Serde.String,

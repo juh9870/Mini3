@@ -8,8 +8,7 @@ H = PixelDisplay.height
 EDGE = (W - H) / 2
 
 setup = function(_)
-    World.addSerde "boardGemIdCounter", Serde.Number
-    World.addSerde "boards", Serde.List.make(Board)
+    World.addSerde "boards", Serde.List.of(Board)
 end function
 
 worldInit = function(world)

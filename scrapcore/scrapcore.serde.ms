@@ -100,7 +100,7 @@ Serde.membersIndex = "_serdeMembers"
 // region List
 
 Serde.List = {"cache": {}}
-Serde.List.make = function(itemType)
+Serde.List.of = function(itemType)
     assertTypeImplements itemType, Serde
     typeName = itemType[@Serde.typeNameMarker]
     if Serde.List.cache.hasIndex(itemType) then
@@ -135,7 +135,7 @@ end function
 // region Map
 
 Serde.Map = {"cache": {}}
-Serde.Map.make = function(itemType)
+Serde.Map.of = function(itemType)
     assertTypeImplements itemType, Serde
     typeName = itemType[@Serde.typeNameMarker]
     if Serde.Map.cache.hasIndex(typeName) then
@@ -154,7 +154,7 @@ Serde.Map.make = function(itemType)
     serde.deserialize = function(self, data)
         deser = {}
         for k in data.indexes
-            deser[@k] outer.itemType.deserialize(data[@k])
+            deser[@k] = outer.itemType.deserialize(data[@k])
         end for
         return deser
     end function

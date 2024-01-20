@@ -8,7 +8,7 @@ globals.drawSysCache = cache
 
 setup = function(_)
     World.addSerde "displayIndex", Serde.Number
-    World.addSerde "sprites", Serde.Map.make(SpriteMarker)
+    World.addSerde "sprites", Serde.Map.of(SpriteMarker)
 end function
 
 worldInit = function(world)
