@@ -1,5 +1,10 @@
 hook locals
+prelude locals
 require "allTweeners", from("mini3.tweener")
+
+setup = function(_)
+    World.addSerde "tweens", Serde.Plain
+end function
 
 worldInit = function(world)
     world.tweens = []

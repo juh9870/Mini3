@@ -1,7 +1,15 @@
+hook locals
+prelude locals
 Pool = module("mini3.caching").Pool
 
 cache = {}
 globals.drawSysCache = cache
+
+
+setup = function(_)
+    World.addSerde "displayIndex", Serde.Number
+    World.addSerde "sprites", Serde.Plain
+end function
 
 worldInit = function(world)
     // print "initializing world for sprites"

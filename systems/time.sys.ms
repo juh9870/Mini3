@@ -1,6 +1,14 @@
+hook locals
+prelude locals
+
 TIMESTEP = 1 / 60 // Ideal fixed timestep
 
 lastTime = 0
+
+setup = function(_)
+    World.addSerde "now", Serde.Number
+    World.addSerde "frameTime", Serde.Number
+end function
 
 worldInit = function(world)
     world.now = 0

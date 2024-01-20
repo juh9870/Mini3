@@ -1,4 +1,5 @@
 hook locals
+prelude locals
 
 savePath = "/usr/world_save.json"
 
@@ -7,14 +8,9 @@ save = function(world, path = null)
     print "Saving the world"
     start = time
 
-    savedWorld = {}
-    for k in world.indexes
-        if k[0] == "_" then continue
-        savedWorld[k] = world[k]
-    end for
+    savedWorld = World.serialize(world)
 
     text = json.toJSON(savedWorld)
-    // f = file.open(savePath, "rw+")
     file.writeLines savePath, [text]
     print "World saved in " + (time - start) + " seconds"
 end function
@@ -25,11 +21,7 @@ load = function(world, path = null)
     start = time
     f = file.open(savePath, "r")
     text = f.read
-    oldWorld = json.parse(text)
-    for k in world.indexes
-        if k[0] == "_" then continue
-        world.remove k
-    end for
+    oldWorld = World.deserialize(json.parse(text))
 
     for k in oldWorld.indexes
         world[k] = oldWorld[k]

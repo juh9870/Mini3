@@ -24,6 +24,7 @@ Loop.class._ctor = function
     self._worldInit = []
     self._stateEnter = []
     self._stateExit = []
+    self._setup = []
     self._condition = null
 end function
 
@@ -34,6 +35,7 @@ Loop.class._worldInit = null
 Loop.class._stateEnter = null
 Loop.class._stateExit = null
 Loop.class._condition = null
+Loop.class._setup = null
 
 // @public
 // Adds a range of systems to run in the loop
@@ -76,6 +78,9 @@ Loop.class._add = function(self, system)
         if system.hasIndex("stateExit") then
             self._stateExit.push system
         end if
+        if system.hasIndex("setup") then
+            self._setup.push system
+        end if
     else
         throw "Only strings, lists or functions or maps can be added as a system"
     end if
@@ -102,6 +107,7 @@ Loop.class.beforeReload = runMany("beforeReload")
 Loop.class.afterReload = runMany("afterReload")
 Loop.class.stateEnter = runMany("stateEnter")
 Loop.class.stateExit = runMany("stateExit")
+Loop.class.setup = runMany("setup")
 
 _runIf = function(args)
     condition = args[0]

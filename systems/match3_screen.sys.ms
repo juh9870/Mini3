@@ -1,12 +1,20 @@
 hook locals
 prelude locals
 
+Board = module("mini3.gridBoard").GridBoard
+
 W = PixelDisplay.width
 H = PixelDisplay.height
 EDGE = (W - H) / 2
 
+setup = function(_)
+    World.addSerde "boardGemIdCounter", Serde.Number
+    World.addSerde "boards", Serde.List.make(Board)
+end function
+
 worldInit = function(world)
     world.boardGemIdCounter = 0
+    world.boards = []
 end function
 
 stateEnter = function(world)
@@ -14,10 +22,10 @@ stateEnter = function(world)
     leftPanel = cut.left(screen, EDGE)
     rightPanel = cut.right(screen, EDGE)
 
-    world.board = grid.init(screen, 10, 10)
-    board = world.board
+    board = Board.make(screen, 10, 10)
+    world.boards.push board
 
-    duration = grid.animateBoardFallIn(world, board)
+    duration = board.animateBoardFallIn(world)
     print "Fade in animation took " + duration + " seconds"
 
     leftBlock = makeSprite(world, "left_block", "/sys/pics/Block.png", 64, 64, leftPanel)

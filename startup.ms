@@ -22,7 +22,8 @@ globals.hotr = function(entrypoint = "entrypoint")
         globals.beforeReload
     end if
     globals.reset
-    import entrypoint
+    run = import(entrypoint)
+    run
 end function
 
 globals.resetw = function
