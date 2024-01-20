@@ -1,7 +1,7 @@
 hook locals
 
 cut = module("mini3.rectcut")
-gems = module("mini3.gems")
+Gem = module("mini3.gem").Gem
 tween = module("mini3.tweener")
 ease = module("mini3.easing")
 module("scrapcore.oop").into locals
@@ -13,37 +13,41 @@ GridBoard = extends(ClassHolder, "Mini3.GridBoard")
 GridBoard.class._ctor = function(self)
     self.w = null
     self.h = null
-    self.gems = null
+    self.gems = []
     self.rect = null
     self.tileSize = null
+    self.id = null
+    self.gemIdCounter = 0
 end function
 
 Serde.register GridBoard, "Mini3.GridBoard", {
   "w": Serde.Number,
   "h": Serde.Number,
-  "gems": Serde.List.make(Serde.Plain),
+  "gems": Serde.List.make(Gem),
   "rect": Rect,
   "tileSize": Serde.Number,
+  "id": Serde.String,
+  "gemIdCounter": Serde.Number,
 }
 
 GridBoard.makeSerde = function
     return super.make
 end function
 
-GridBoard.make = function(self, rect, width, height, gemType)
+// Makes a new board
+// @template GemType - type of a gem
+// @param {string} id - unique board ID
+// @param {Rect} rect - rect to fit board into
+// @param {number} width - board width (in cells)
+// @param {number} height - board height (in cells)
+// @param {GemType} blank - blank gem type
+GridBoard.make = function(self, id, rect, width, height, blank)
     board = super.make
     availableW = rect.width()
     availableH = rect.height()
     tileW = availableW / width
     tileH = availableH / height
     tileSize = min(tileW, tileH)
-
-    if gemType == null then
-        rand = @gems.randomType
-        gemType = function(pos)
-            return outer.rand
-        end function
-    end if
 
     boardW = tileSize * width
     boardH = tileSize * height
@@ -58,18 +62,35 @@ GridBoard.make = function(self, rect, width, height, gemType)
 
     board.w = width
     board.h = height
-    board.gems = []
     board.rect = rect
     board.tileSize = tileSize
+    board.id = id
 
-    for y in range(0, board.h - 1)
-        for x in range(0, board.w - 1)
-            gem = gems.make(gemType(board.gems.len), board.gems.len)
-            board.gems.push gem
-        end for
+    for i in range(1, board.w * board.h)
+        board.gems.push Gem.make(board, blank, board.gems.len)
     end for
 
     return board
+end function
+
+// @param {(number) => GemType} gemType - gem generator
+GridBoard.class.populate = function(self, gemType)
+    if gemType == null then
+        rand = @Gem.randomType
+        gemType = function(pos)
+            return outer.rand
+        end function
+    end if
+
+    w = @self.w
+    h = @self.h
+    for y in range(0, @h - 1)
+        for x in range(0, @w - 1)
+            pos = @y * @w + @x
+            gem = Gem.make(self, gemType(@pos), @pos)
+            self.gems[@pos] = @gem
+        end for
+    end for
 end function
 
 GridBoard.class.pos = function(self, pos)
@@ -104,7 +125,7 @@ GridBoard.class.animateBoardFallIn = function(self, world)
         for x in range(0, @self.w - 1)
             pos = @y * @self.w + @x
             gem = @self.gems[@pos]
-            sprite = gems.sprite(@world, @self, @pos)
+            sprite = gem.sprite(@world, @self)
             spritePos = self.pos(@pos)
             sprite.x = (@spritePos)[0]
             sprite.y = (@spritePos)[1]

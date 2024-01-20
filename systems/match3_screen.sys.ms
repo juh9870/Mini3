@@ -22,7 +22,8 @@ stateEnter = function(world)
     leftPanel = screen.cutLeft(EDGE)
     rightPanel = screen.cutRight(EDGE)
 
-    board = Board.make(screen, 10, 10)
+    board = Board.make("board_1", screen, 10, 10, color.red)
+    board.populate
     world.boards.push board
 
     duration = board.animateBoardFallIn(world)

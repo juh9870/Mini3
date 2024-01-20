@@ -10,10 +10,10 @@ Serde = module("scrapcore.serde")
 // RectCut for UI needs
 Rect = extends(ClassHolder, "Mini3.Rect")
 Rect._ctor = function
-    self.left = null
-    self.top = null
-    self.right = null
-    self.bottom = null
+    self.left = 0
+    self.top = 0
+    self.right = 0
+    self.bottom = 0
 end function
 
 Serde.register Rect, "Mini3.Rect", {
